@@ -1,0 +1,397 @@
+{% extends "base.html" %}
+{% block title %}Lavannya Rathod — Software Engineer · Data Science · AI Portfolio{% endblock %}
+
+{% block content %}
+
+<!-- ══════════════════════════════════════════════════
+     A. HERO
+══════════════════════════════════════════════════ -->
+<section class="hero" id="hero" aria-labelledby="hero-heading">
+  <div class="container hero-inner">
+    <div class="hero-text">
+      <p class="hero-label">Hi, I'm</p>
+      <h1 class="hero-name" id="hero-heading">{{ p.name }}</h1>
+      <p class="hero-sub">{{ p.subheadline }}</p>
+      <p class="hero-summary">{{ p.summary }}</p>
+
+      <div class="hero-actions">
+        <a href="#projects" class="btn btn-primary">View Projects</a>
+        <a href="/resume" class="btn btn-outline" download>Download Résumé</a>
+      </div>
+
+      <div class="hero-social">
+        {% if p.linkedin %}
+        <a href="{{ p.linkedin }}" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="LinkedIn profile">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          LinkedIn
+        </a>
+        {% endif %}
+        {% if p.github %}
+        <a href="{{ p.github }}" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="GitHub profile">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+          GitHub
+        </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Profile photo or initials fallback -->
+    <div class="hero-visual" aria-hidden="true">
+      <div class="hero-avatar">
+        <img
+          src="{{ url_for('static', filename=p.profile_photo) }}"
+          alt="Photo of Lavannya Pradeep Rathod"
+          class="avatar-photo"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="avatar-initials" style="display:none;">LR</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     B. ABOUT
+══════════════════════════════════════════════════ -->
+<section class="section" id="about" aria-labelledby="about-heading">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title" id="about-heading">About Me</h2>
+      <div class="section-rule" aria-hidden="true"></div>
+    </div>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>
+          I'm a recent Electronics and Communication Engineering graduate from The Oxford College of Engineering, Bangalore.
+          I enjoy building things with code — whether that's a machine learning pipeline, a REST API backend, or a data dashboard
+          that helps people make better decisions.
+        </p>
+        <p>
+          My technical toolkit centres on <strong>Python</strong> and <strong>SQL</strong>, with experience in
+          <strong>Flask</strong>, <strong>Streamlit</strong>, and REST API development on the software side, and
+          <strong>Pandas</strong>, <strong>Scikit-learn</strong>, and <strong>Power BI</strong> on the data side.
+          I've built projects in healthcare ML, NLP-driven content generation, e-commerce analytics, and automated reporting.
+        </p>
+        <p>
+          I'm actively looking for entry-level roles in <strong>Software Engineering</strong>, <strong>Data Science</strong>,
+          or <strong>AI / Machine Learning</strong> where I can contribute to real products and continue growing as an engineer.
+        </p>
+      </div>
+      <div class="about-facts">
+        <div class="fact-item">
+          <span class="fact-label">Degree</span>
+          <span class="fact-value">B.E. in Electronics &amp; Communication Engineering</span>
+        </div>
+        <div class="fact-item">
+          <span class="fact-label">Institution</span>
+          <span class="fact-value">The Oxford College of Engineering, Bangalore</span>
+        </div>
+        <div class="fact-item">
+          <span class="fact-label">CGPA</span>
+          <span class="fact-value">7.9 / 10</span>
+        </div>
+        <div class="fact-item">
+          <span class="fact-label">Open to</span>
+          <span class="fact-value">Software Engineering · Data Science · AI / ML</span>
+        </div>
+        <div class="fact-item">
+          <span class="fact-label">Contact</span>
+          <span class="fact-value">
+            <a href="mailto:{{ p.email }}">{{ p.email }}</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     C. SKILLS
+══════════════════════════════════════════════════ -->
+<section class="section section-alt" id="skills" aria-labelledby="skills-heading">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title" id="skills-heading">Skills &amp; Technologies</h2>
+      <div class="section-rule" aria-hidden="true"></div>
+    </div>
+    <div class="skills-grid">
+      {% for group in p.skills %}
+      <div class="skill-group">
+        <h3 class="skill-category">{{ group.category }}</h3>
+        <ul class="skill-tags" role="list">
+          {% for item in group.skills_list %}
+          <li class="skill-tag">{{ item }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     D. PROJECTS — vertical slider
+══════════════════════════════════════════════════ -->
+<section class="section" id="projects" aria-labelledby="projects-heading">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title" id="projects-heading">Projects</h2>
+      <div class="section-rule" aria-hidden="true"></div>
+    </div>
+
+    <div class="proj-slider-wrap">
+      <!-- Sidebar nav dots + counter -->
+      <div class="proj-sidebar" aria-hidden="true">
+        <span class="proj-counter" id="projCounter">1 / {{ p.projects|length }}</span>
+        <div class="proj-dots" id="projDots">
+          {% for proj in p.projects %}
+          <button
+            class="proj-dot{% if loop.index == 1 %} active{% endif %}"
+            data-index="{{ loop.index0 }}"
+            aria-label="Go to project {{ loop.index }}"
+          ></button>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Slider track -->
+      <div class="proj-slider" id="projSlider" role="region" aria-label="Project showcase">
+        {% for proj in p.projects %}
+        <article
+          class="proj-slide{% if loop.index == 1 %} active{% endif %}"
+          id="{{ proj.id }}"
+          data-index="{{ loop.index0 }}"
+          aria-hidden="{{ 'false' if loop.index == 1 else 'true' }}"
+        >
+          <div class="proj-slide-inner">
+            <div class="proj-slide-left">
+              <div class="proj-num">{{ proj.num }}</div>
+              <span class="project-category">{{ proj.category }}</span>
+              <h3 class="project-title">{{ proj.title }}</h3>
+              <p class="project-summary">{{ proj.summary }}</p>
+              <div class="project-tools">
+                {% for tool in proj.tools %}
+                <span class="tool-chip">{{ tool }}</span>
+                {% endfor %}
+              </div>
+              <div class="project-links">
+                {% if proj.github %}
+                <a href="{{ proj.github }}" class="project-link" target="_blank" rel="noopener noreferrer" aria-label="GitHub repository">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                  GitHub
+                </a>
+                {% endif %}
+                {% if proj.demo %}
+                <a href="{{ proj.demo }}" class="project-link" target="_blank" rel="noopener noreferrer" aria-label="Live demo">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                  Live Demo
+                </a>
+                {% endif %}
+              </div>
+            </div>
+            <div class="proj-slide-right">
+              <h4 class="proj-bullets-heading">Key Highlights</h4>
+              <ul class="project-bullets">
+                {% for bullet in proj.bullets %}
+                <li>{{ bullet }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Arrow navigation -->
+    <div class="proj-nav" aria-label="Project navigation">
+      <button class="proj-arrow" id="projPrev" aria-label="Previous project">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Prev
+      </button>
+      <button class="proj-arrow proj-arrow-next" id="projNext" aria-label="Next project">
+        Next
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     E. EXPERIENCE
+══════════════════════════════════════════════════ -->
+<section class="section section-alt" id="experience" aria-labelledby="experience-heading">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title" id="experience-heading">Experience</h2>
+      <div class="section-rule" aria-hidden="true"></div>
+    </div>
+    <div class="timeline">
+      {% for exp in p.experience %}
+      <div class="timeline-item">
+        <div class="timeline-marker" aria-hidden="true"></div>
+        <div class="timeline-content">
+          <div class="timeline-meta">
+            <div>
+              <h3 class="timeline-role">{{ exp.role }}</h3>
+              <p class="timeline-org">{{ exp.org }}</p>
+            </div>
+            <div class="timeline-right">
+              {% if exp.type %}
+              <span class="timeline-type">{{ exp.type }}</span>
+              {% endif %}
+              {% if exp.dates %}
+              <span class="timeline-dates">{{ exp.dates }}</span>
+              {% endif %}
+            </div>
+          </div>
+          <ul class="timeline-bullets" role="list">
+            {% for bullet in exp.bullets %}
+            <li>{{ bullet }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     F. EDUCATION
+══════════════════════════════════════════════════ -->
+<section class="section" id="education" aria-labelledby="education-heading">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title" id="education-heading">Education</h2>
+      <div class="section-rule" aria-hidden="true"></div>
+    </div>
+    <div class="edu-list">
+      {% for edu in p.education %}
+      <div class="edu-item edu-level-{{ edu.level }}">
+        <div class="edu-icon" aria-hidden="true">
+          {% if edu.level == 'degree' %}
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          {% else %}
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          {% endif %}
+        </div>
+        <div class="edu-body">
+          <div class="edu-header-row">
+            <div>
+              <h3 class="edu-degree">
+                {{ edu.degree }}{% if edu.field %} — {{ edu.field }}{% endif %}
+              </h3>
+              <p class="edu-institution">{{ edu.institution }}</p>
+            </div>
+            <span class="edu-location">{{ edu.location }}</span>
+          </div>
+          <div class="edu-meta">
+            {% if edu.dates %}<span class="edu-dates">{{ edu.dates }}</span>{% endif %}
+            {% if edu.result %}
+            <span class="edu-cgpa">{{ edu.result_label }}: {{ edu.result }}</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     G. CERTIFICATIONS
+══════════════════════════════════════════════════ -->
+<section class="section section-alt" id="certifications" aria-labelledby="certs-heading">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title" id="certs-heading">Certifications</h2>
+      <div class="section-rule" aria-hidden="true"></div>
+    </div>
+    <ul class="cert-list" role="list">
+      {% for cert in p.certifications %}
+      <li class="cert-item">
+        <div class="cert-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+        </div>
+        <div class="cert-body">
+          <span class="cert-title">{{ cert.title }}</span>
+          {% if cert.issuer %}<span class="cert-issuer">{{ cert.issuer }}</span>{% endif %}
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     H. CONTACT
+══════════════════════════════════════════════════ -->
+<section class="section" id="contact" aria-labelledby="contact-heading">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title" id="contact-heading">Contact</h2>
+      <div class="section-rule" aria-hidden="true"></div>
+    </div>
+    <p class="contact-intro">
+      I'm open to entry-level opportunities in software engineering, data science, and machine learning.
+      Feel free to reach out through any of the channels below.
+    </p>
+    <div class="contact-grid">
+
+      <a href="mailto:{{ p.email }}" class="contact-card" id="contact-email">
+        <div class="contact-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <div class="contact-info">
+          <span class="contact-label">Email</span>
+          <span class="contact-value">{{ p.email }}</span>
+        </div>
+      </a>
+
+      <a href="tel:{{ p.phone }}" class="contact-card" id="contact-phone">
+        <div class="contact-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <div class="contact-info">
+          <span class="contact-label">Phone</span>
+          <span class="contact-value">{{ p.phone }}</span>
+        </div>
+      </a>
+
+      {% if p.linkedin %}
+      <a href="{{ p.linkedin }}" class="contact-card" target="_blank" rel="noopener noreferrer" id="contact-linkedin">
+        <div class="contact-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </div>
+        <div class="contact-info">
+          <span class="contact-label">LinkedIn</span>
+          <span class="contact-value">lavannya-rathod</span>
+        </div>
+      </a>
+      {% endif %}
+
+      {% if p.github %}
+      <a href="{{ p.github }}" class="contact-card" target="_blank" rel="noopener noreferrer" id="contact-github">
+        <div class="contact-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+        </div>
+        <div class="contact-info">
+          <span class="contact-label">GitHub</span>
+          <span class="contact-value">lavannya-rathod</span>
+        </div>
+      </a>
+      {% endif %}
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}
