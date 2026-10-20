@@ -154,4 +154,166 @@
     });
   }
 
+  /* ── Interactive Background & Cursor Spotlight ─────────── */
+  (function initInteractiveBg() {
+    // 1. Mouse Spotlight Tracker
+    const spotlight = document.getElementById('cursorSpotlight');
+    let targetX = window.innerWidth / 2;
+    let targetY = window.innerHeight * 0.35;
+    let currentX = targetX;
+    let currentY = targetY;
+
+    window.addEventListener('pointermove', function (e) {
+      targetX = e.clientX;
+      targetY = e.clientY;
+    }, { passive: true });
+
+    function updateSpotlight() {
+      currentX += (targetX - currentX) * 0.12;
+      currentY += (targetY - currentY) * 0.12;
+      if (spotlight) {
+        spotlight.style.setProperty('--mouse-x', currentX.toFixed(1) + 'px');
+        spotlight.style.setProperty('--mouse-y', currentY.toFixed(1) + 'px');
+      }
+      requestAnimationFrame(updateSpotlight);
+    }
+    requestAnimationFrame(updateSpotlight);
+
+    // 2. Interactive Constellation Canvas
+    const canvas = document.getElementById('bgCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let width = 0;
+    let height = 0;
+    let particles = [];
+    let mouse = { x: null, y: null, radius: 150 };
+
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      createParticles();
+    }
+
+    window.addEventListener('resize', resize, { passive: true });
+
+    window.addEventListener('pointermove', function (e) {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    }, { passive: true });
+
+    window.addEventListener('pointerleave', function () {
+      mouse.x = null;
+      mouse.y = null;
+    });
+
+    // Ripple wave effect on click
+    let ripples = [];
+    window.addEventListener('click', function (e) {
+      ripples.push({
+        x: e.clientX,
+        y: e.clientY,
+        r: 0,
+        maxR: 130,
+        opacity: 0.45
+      });
+    });
+
+    function createParticles() {
+      particles = [];
+      const count = Math.min(50, Math.max(25, Math.floor(width / 32)));
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.55,
+          vy: (Math.random() - 0.5) * 0.55,
+          radius: Math.random() * 2 + 1.2,
+          color: Math.random() > 0.4 ? 'rgba(112, 96, 168, 0.55)' : 'rgba(82, 122, 91, 0.45)',
+        });
+      }
+    }
+
+    resize();
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+
+      // Draw & update click ripples
+      for (let r = ripples.length - 1; r >= 0; r--) {
+        const rip = ripples[r];
+        rip.r += 3.8;
+        rip.opacity -= 0.014;
+        if (rip.opacity <= 0) {
+          ripples.splice(r, 1);
+          continue;
+        }
+        ctx.beginPath();
+        ctx.arc(rip.x, rip.y, rip.r, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(142, 122, 212, ' + rip.opacity + ')';
+        ctx.lineWidth = 1.6;
+        ctx.stroke();
+      }
+
+      // Draw & update particles
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < -10) p.x = width + 10;
+        else if (p.x > width + 10) p.x = -10;
+        if (p.y < -10) p.y = height + 10;
+        else if (p.y > height + 10) p.y = -10;
+
+        // Mouse interaction
+        if (mouse.x !== null && mouse.y !== null) {
+          const dx = mouse.x - p.x;
+          const dy = mouse.y - p.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < mouse.radius && dist > 0) {
+            const force = (mouse.radius - dist) / mouse.radius;
+            p.x -= (dx / dist) * force * 1.6;
+            p.y -= (dy / dist) * force * 1.6;
+
+            // Connect mouse to particle with glowing purple thread
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(mouse.x, mouse.y);
+            ctx.strokeStyle = 'rgba(142, 122, 212, ' + (force * 0.4) + ')';
+            ctx.lineWidth = 1.2;
+            ctx.stroke();
+          }
+        }
+
+        // Draw particle dot
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+
+        // Connect nearby particles
+        for (let j = i + 1; j < particles.length; j++) {
+          const p2 = particles[j];
+          const dist2 = Math.hypot(p.x - p2.x, p.y - p2.y);
+          if (dist2 < 115) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            const alpha = (1 - dist2 / 115) * 0.28;
+            ctx.strokeStyle = 'rgba(112, 96, 168, ' + alpha + ')';
+            ctx.lineWidth = 0.9;
+            ctx.stroke();
+          }
+        }
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  })();
+
 })();
