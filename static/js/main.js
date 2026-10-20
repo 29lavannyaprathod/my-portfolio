@@ -68,33 +68,50 @@
   const counter   = document.getElementById('projCounter');
   const btnPrev   = document.getElementById('projPrev');
   const btnNext   = document.getElementById('projNext');
+  const sliderEl  = document.getElementById('projSlider');
   const total     = slides.length;
 
   if (!total) return;   // no projects — bail out
 
   let current = 0;
+  let isAnimating = false;
 
-  function goTo(index) {
+  function goTo(index, direction) {
     // bounds
-    if (index < 0 || index >= total) return;
+    if (index < 0 || index >= total || index === current || isAnimating) return;
+
+    isAnimating = true;
+    const prevIndex = current;
+    const dir = direction || (index > current ? 'bottom' : 'top');
 
     // deactivate current
-    slides[current].classList.remove('active');
-    slides[current].setAttribute('aria-hidden', 'true');
-    dots[current].classList.remove('active');
+    const prevSlide = slides[prevIndex];
+    prevSlide.classList.remove('active', 'slide-from-bottom', 'slide-from-top');
+    prevSlide.setAttribute('aria-hidden', 'true');
+    dots[prevIndex].classList.remove('active');
 
     // activate new
     current = index;
-    slides[current].classList.add('active');
-    slides[current].setAttribute('aria-hidden', 'false');
+    const nextSlide = slides[current];
+    nextSlide.classList.remove('slide-from-bottom', 'slide-from-top');
+    nextSlide.classList.add('active', dir === 'bottom' ? 'slide-from-bottom' : 'slide-from-top');
+    nextSlide.setAttribute('aria-hidden', 'false');
     dots[current].classList.add('active');
 
-    // counter
-    if (counter) counter.textContent = (current + 1) + ' / ' + total;
+    // counter with subtle bounce animation
+    if (counter) {
+      counter.textContent = (current + 1) + ' / ' + total;
+      counter.classList.add('counter-pulse');
+      setTimeout(function () { counter.classList.remove('counter-pulse'); }, 300);
+    }
 
     // arrow states
     if (btnPrev) btnPrev.disabled = current === 0;
     if (btnNext) btnNext.disabled = current === total - 1;
+
+    setTimeout(function () {
+      isAnimating = false;
+    }, 380);
   }
 
   // initial state
@@ -109,15 +126,31 @@
   });
 
   // arrow clicks
-  if (btnPrev) btnPrev.addEventListener('click', function () { goTo(current - 1); });
-  if (btnNext) btnNext.addEventListener('click', function () { goTo(current + 1); });
+  if (btnPrev) btnPrev.addEventListener('click', function () { goTo(current - 1, 'top'); });
+  if (btnNext) btnNext.addEventListener('click', function () { goTo(current + 1, 'bottom'); });
 
-  // keyboard left/right when focused inside slider section
+  // mouse wheel on slider
+  if (sliderEl) {
+    let wheelTimeout;
+    sliderEl.addEventListener('wheel', function (e) {
+      if (Math.abs(e.deltaY) < 35) return;
+      clearTimeout(wheelTimeout);
+      wheelTimeout = setTimeout(function () {
+        if (e.deltaY > 0) {
+          goTo(current + 1, 'bottom');
+        } else {
+          goTo(current - 1, 'top');
+        }
+      }, 50);
+    }, { passive: true });
+  }
+
+  // keyboard left/right or up/down when focused inside slider section
   const projSection = document.getElementById('projects');
   if (projSection) {
     projSection.addEventListener('keydown', function (e) {
-      if (e.key === 'ArrowRight' || e.key === 'ArrowDown')  goTo(current + 1);
-      if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')    goTo(current - 1);
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown')  goTo(current + 1, 'bottom');
+      if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')    goTo(current - 1, 'top');
     });
   }
 
